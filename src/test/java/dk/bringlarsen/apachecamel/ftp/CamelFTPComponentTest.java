@@ -1,36 +1,38 @@
 package dk.bringlarsen.apachecamel.ftp;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.hamcrest.CoreMatchers;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CamelFTPComponentTest extends BaseFTPTest {
+import java.io.File;
+import java.util.concurrent.atomic.AtomicReference;
 
-    private FTPApplication application;
+public class CamelFTPComponentTest extends BaseCamelFTPComponentTest {
 
     @Before
     public void setup() {
         setupFtpServer();
-        application = new FTPApplication("/out", sftpServer.getPort());
-        application.startup();
-
     }
 
     @Test
-    public void testFileContentIsRead() {
-        application.addSubscriber(fileContent -> {
-            Assert.assertThat(fileContent, CoreMatchers.is("1;2;3"));
-            return null;
+    public void testFileContentIsRead() throws Exception {
+        final AtomicReference<String> response = new AtomicReference<>();
+        addRouteAndStartContext(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("sftp://user@localhost:" + sftpServer.getPort() + "/out?password=secret&localWorkDirectory=/tmp/workdir&move=.done")
+                        .log("Downloaded file ${file:name} complete.")
+                        .convertBodyTo(File.class)
+                        .convertBodyTo(String.class)
+                        .process(e -> response.set((String) e.getIn().getBody()));
+            }
         });
+
         uploadFileToFTP("/out/somefile.csv", "1;2;3");
-
         waitForFileToBeProcessed("/out/.done/somefile.csv");
-    }
 
-    @After
-    public void teardown() {
-        application.shutdown();
+        Assert.assertThat(response.get(), CoreMatchers.is("1;2;3"));
     }
 }

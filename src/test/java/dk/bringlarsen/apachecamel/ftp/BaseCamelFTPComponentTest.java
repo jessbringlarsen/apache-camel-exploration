@@ -1,16 +1,21 @@
 package dk.bringlarsen.apachecamel.ftp;
 
 import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Rule;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public abstract class BaseFTPTest {
+public abstract class BaseCamelFTPComponentTest {
 
     @Rule
     public FakeSftpServerRule sftpServer = new FakeSftpServerRule();
+    private final CamelContext camelContext = new DefaultCamelContext();
 
     void setupFtpServer() {
         try {
@@ -44,5 +49,15 @@ public abstract class BaseFTPTest {
             Thread.currentThread().interrupt();
             Assert.fail(e.getMessage());
         }
+    }
+
+    void addRouteAndStartContext(RouteBuilder route) throws Exception {
+        camelContext.addRoutes(route);
+        camelContext.start();
+    }
+
+    @After
+    public void teardown() {
+        camelContext.stop();
     }
 }
