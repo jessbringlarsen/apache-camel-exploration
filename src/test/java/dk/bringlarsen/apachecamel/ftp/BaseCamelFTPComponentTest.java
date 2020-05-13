@@ -35,7 +35,7 @@ public abstract class BaseCamelFTPComponentTest {
         }
     }
 
-    void waitForFileToBeProcessed(String filename) {
+    void waitForDoneFile(String filename) {
         try {
             for (int retries = 0; retries < 10; retries++) {
                 if (!sftpServer.existsFile(filename)) {
