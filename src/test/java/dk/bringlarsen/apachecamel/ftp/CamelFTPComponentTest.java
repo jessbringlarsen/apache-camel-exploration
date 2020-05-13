@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CamelFTPComponentTest extends BaseCamelFTPComponentTest {
@@ -23,10 +22,9 @@ public class CamelFTPComponentTest extends BaseCamelFTPComponentTest {
         addRouteAndStartContext(new RouteBuilder() {
             @Override
             public void configure() {
-                from("sftp://user@localhost:" + sftpServer.getPort() + "/out?password=secret&localWorkDirectory=/tmp/workdir&move=.done")
-                        .convertBodyTo(File.class)
+                from(String.format("sftp://user@localhost:%s/out?password=secret&localWorkDirectory=target/workdir&move=.done", sftpServer.getPort()))
                         .convertBodyTo(String.class)
-                        .log(LoggingLevel.INFO, "Got: ${file:name} with content: ${body}")
+                        .log(LoggingLevel.DEBUG, "Got: ${file:name} with content: ${body}")
                         .process(e -> response.set((String) e.getIn().getBody()));
             }
         });
