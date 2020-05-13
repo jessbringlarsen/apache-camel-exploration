@@ -43,18 +43,39 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ftp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-guava-eventbus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>28.2-jre</version>
+        </dependency>
 
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.github.stefanbirkner</groupId>
             <artifactId>fake-sftp-server-rule</artifactId>
             <version>2.0.1</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.1.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
