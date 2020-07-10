@@ -26,7 +26,6 @@ public class CamelFTPComponentTest extends BaseCamelFTPComponentTest {
             @Override
             public void configure() {
                 from(String.format("sftp://user@localhost:%s/out?password=secret&noop=true", sftpServer.getPort()))
-                    .convertBodyTo(String.class)
                     .process(e -> result.set(new Pair<>(e.getIn().getHeader("CamelFileName", String.class), e.getIn().getBody(String.class))));
             }
         });
