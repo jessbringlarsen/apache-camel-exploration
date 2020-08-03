@@ -4,6 +4,7 @@ import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.RouteController;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -51,9 +52,17 @@ public abstract class BaseCamelFTPComponentTest {
         }
     }
 
-    void addRouteAndStartContext(RouteBuilder route) throws Exception {
-        camelContext.addRoutes(route);
-        camelContext.start();
+    void addRouteAndStartContext(RouteBuilder route) {
+        try {
+            camelContext.addRoutes(route);
+            camelContext.start();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to start Camel route!", e);
+        }
+    }
+
+    RouteController getCamelRouteController() {
+        return camelContext.getRouteController();
     }
 
     @After
